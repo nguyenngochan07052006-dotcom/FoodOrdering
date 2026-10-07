@@ -28,6 +28,7 @@
         <activity android:name=".cart.CartActivity" />
         <activity android:name=".order.OrdersActivity" />
         <activity android:name=".profile.ProfileActivity" />
+        <activity android:name=".admin.AdminProductsActivity" />
     </application>
 
 </manifest>

@@ -2,84 +2,98 @@ package com.example.foodordering.admin
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodordering.R
 import com.example.foodordering.auth.LoginActivity
 import com.example.foodordering.database.DatabaseHelper
 import com.example.foodordering.utils.SessionManager
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 
 class AdminDashboardActivity : AppCompatActivity() {
 
-    private lateinit var sessionManager: SessionManager
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var sessionManager: SessionManager
+
+    private lateinit var tvPendingCount: TextView
+    private lateinit var tvPreparingCount: TextView
+    private lateinit var tvReadyCount: TextView
+    private lateinit var tvCompletedCount: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_dashboard)
 
-        sessionManager = SessionManager(this)
         dbHelper = DatabaseHelper(this)
+        sessionManager = SessionManager(this)
 
-        // Kiểm tra quyền Admin
+        // Chỉ cho phép Admin
         if (!sessionManager.isLoggedIn() || !sessionManager.isAdmin()) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
 
-        val tvWelcome = findViewById<TextView>(R.id.tvAdminWelcome)
-        val tvPending = findViewById<TextView>(R.id.tvPendingCount)
-        val tvPreparing = findViewById<TextView>(R.id.tvPreparingCount)
-        val tvCompleted = findViewById<TextView>(R.id.tvCompletedCount)
+        tvPendingCount = findViewById(R.id.tvPendingCount)
+        tvPreparingCount = findViewById(R.id.tvPreparingCount)
+        tvReadyCount = findViewById(R.id.tvReadyCount)
+        tvCompletedCount = findViewById(R.id.tvCompletedCount)
 
-        tvWelcome.text = "Xin chào, ${sessionManager.getName()}"
-
-        // Đếm đơn theo trạng thái
-        updateCounts(tvPending, tvPreparing, tvCompleted)
-
-        findViewById<Button>(R.id.btnManageOrders).setOnClickListener {
-            startActivity(Intent(this, OrderManagementActivity::class.java))
-        }
-
-        findViewById<Button>(R.id.btnManageProducts).setOnClickListener {
-            android.widget.Toast.makeText(this, "Tính năng đang được phát triển", android.widget.Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<Button>(R.id.btnLogoutAdmin).setOnClickListener {
+        findViewById<MaterialButton>(R.id.btnLogout).setOnClickListener {
             sessionManager.logout()
             startActivity(Intent(this, LoginActivity::class.java))
-            finishAffinity()
+            finish()
         }
+
+        findViewById<MaterialCardView>(R.id.cardManageOrders).setOnClickListener {
+            startActivity(Intent(this, AdminOrdersActivity::class.java))
+        }
+
+        findViewById<MaterialCardView>(R.id.cardManageProducts).setOnClickListener {
+            startActivity(Intent(this, AdminProductsActivity::class.java))
+        }
+
+        loadStatistics()
     }
 
     override fun onResume() {
         super.onResume()
-        val tvPending = findViewById<TextView>(R.id.tvPendingCount)
-        val tvPreparing = findViewById<TextView>(R.id.tvPreparingCount)
-        val tvCompleted = findViewById<TextView>(R.id.tvCompletedCount)
-        updateCounts(tvPending, tvPreparing, tvCompleted)
+        loadStatistics()
     }
 
-    private fun updateCounts(tvPending: TextView, tvPreparing: TextView, tvCompleted: TextView) {
+    private fun loadStatistics() {
         val db = dbHelper.readableDatabase
 
-        fun countByStatus(status: String): Int {
-            val cursor = db.rawQuery(
-                "SELECT COUNT(*) FROM ${DatabaseHelper.TABLE_ORDERS} WHERE status = ?",
-                arrayOf(status)
-            )
-            cursor.moveToFirst()
-            val count = cursor.getInt(0)
-            cursor.close()
-            return count
-        }
+        // Đếm theo từng trạng thái
+        val pending = countOrdersByStatus(db, listOf("pending", "paid"))
+        val preparing = countOrdersByStatus(db, listOf("confirmed", "preparing"))
+        val ready = countOrdersByStatus(db, listOf("ready"))
+        val completed = countOrdersByStatus(db, listOf("completed"))
 
-        tvPending.text = countByStatus("PENDING").toString()
-        tvPreparing.text = (countByStatus("CONFIRMED") + countByStatus("PREPARING") + countByStatus("READY")).toString()
-        tvCompleted.text = countByStatus("COMPLETED").toString()
+        tvPendingCount.text = pending.toString()
+        tvPreparingCount.text = preparing.toString()
+        tvReadyCount.text = ready.toString()
+        tvCompletedCount.text = completed.toString()
 
         db.close()
+    }
+
+    private fun countOrdersByStatus(db: android.database.sqlite.SQLiteDatabase, statuses: List<String>): Int {
+        if (statuses.isEmpty()) return 0
+
+        val placeholders = statuses.joinToString(",") { "?" }
+        val cursor = db.rawQuery(
+            "SELECT COUNT(*) FROM ${DatabaseHelper.TABLE_ORDERS} WHERE status IN ($placeholders)",
+            statuses.toTypedArray()
+        )
+
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        return count
     }
 }
