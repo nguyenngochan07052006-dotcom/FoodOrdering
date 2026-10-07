@@ -93,6 +93,31 @@
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
     </LinearLayout>
 
+    <!-- Ô tìm kiếm -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxStrokeColor="#6D4C41"
+        app:hintTextColor="#8D6E63">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tìm món..."
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:textSize="14sp"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <!-- Tiêu đề danh mục -->
     <TextView
         android:layout_width="match_parent"
@@ -105,7 +130,7 @@
         android:paddingTop="12dp"
         android:paddingBottom="6dp" />
 
-    <!-- Danh mục (cuộn ngang) -->
+    <!-- Danh mục -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCategories"
         android:layout_width="match_parent"

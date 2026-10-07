@@ -3,6 +3,7 @@ package com.example.foodordering.product
 import android.content.ContentValues
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ class ProductDetailActivity : AppCompatActivity() {
     private var productName: String = ""
     private var productPrice: Double = 0.0
     private var productDesc: String = ""
+    private var productStatus: String = "available"
     private var quantity: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,11 +32,17 @@ class ProductDetailActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
         sessionManager = SessionManager(this)
 
+        // Nút quay lại
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
+            finish()
+        }
+
         // Lấy dữ liệu từ Intent
         productId = intent.getIntExtra("PRODUCT_ID", -1)
         productName = intent.getStringExtra("PRODUCT_NAME") ?: ""
         productPrice = intent.getDoubleExtra("PRODUCT_PRICE", 0.0)
         productDesc = intent.getStringExtra("PRODUCT_DESC") ?: ""
+        productStatus = intent.getStringExtra("PRODUCT_STATUS") ?: "available"
 
         val tvName = findViewById<TextView>(R.id.tvProductName)
         val tvPrice = findViewById<TextView>(R.id.tvProductPrice)
@@ -50,6 +58,20 @@ class ProductDetailActivity : AppCompatActivity() {
         tvPrice.text = formatter.format(productPrice)
         tvDesc.text = productDesc
         tvQuantity.text = quantity.toString()
+
+        // ===== KIỂM TRA MÓN UNAVAILABLE =====
+        if (productStatus != "available") {
+            Toast.makeText(this, "Món này hiện không còn bán", Toast.LENGTH_LONG).show()
+            btnAddToCart.isEnabled = false
+            btnAddToCart.text = "Hết hàng"
+            btnAddToCart.alpha = 0.5f
+
+            // Khóa luôn nút tăng giảm số lượng
+            btnMinus.isEnabled = false
+            btnPlus.isEnabled = false
+            btnMinus.alpha = 0.5f
+            btnPlus.alpha = 0.5f
+        }
 
         btnMinus.setOnClickListener {
             if (quantity > 1) {
@@ -69,6 +91,12 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun addToCart() {
+        // Kiểm tra lại lần nữa trước khi thêm
+        if (productStatus != "available") {
+            Toast.makeText(this, "Món này hiện không còn bán", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if (!sessionManager.isLoggedIn()) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()
             return

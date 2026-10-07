@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodordering.R
-import com.example.foodordering.product.Product
+import com.example.foodordering.model.Product
 import java.text.NumberFormat
 import java.util.Locale
 

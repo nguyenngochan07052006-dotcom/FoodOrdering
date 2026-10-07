@@ -50,5 +50,8 @@ class ProfileActivity : AppCompatActivity() {
                 .setNegativeButton("Hủy", null)
                 .show()
         }
+        findViewById<android.widget.ImageButton>(R.id.btnBack).setOnClickListener {
+            finish()
+        }
     }
 }

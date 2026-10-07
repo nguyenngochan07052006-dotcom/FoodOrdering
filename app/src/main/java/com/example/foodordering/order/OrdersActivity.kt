@@ -1,7 +1,11 @@
 package com.example.foodordering.order
 
+import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +36,21 @@ class OrdersActivity : AppCompatActivity() {
             return
         }
 
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
+
         rvOrders = findViewById(R.id.rvOrders)
         tvEmpty = findViewById(R.id.tvEmptyOrders)
 
-        adapter = OrderAdapter(orders)
+        adapter = OrderAdapter(
+            orders = orders,
+            onReorder = { order -> reorder(order) },
+            onItemClick = { order ->
+                val intent = Intent(this, OrderDetailActivity::class.java)
+                intent.putExtra("ORDER_ID", order.id)
+                startActivity(intent)
+            }
+        )
+
         rvOrders.layoutManager = LinearLayoutManager(this)
         rvOrders.adapter = adapter
 
@@ -86,6 +101,76 @@ class OrdersActivity : AppCompatActivity() {
         } else {
             tvEmpty.visibility = android.view.View.GONE
             rvOrders.visibility = android.view.View.VISIBLE
+        }
+    }
+
+    // Quick Order - Đặt lại đơn cũ
+    private fun reorder(order: Order) {
+        val userId = sessionManager.getUserId()
+        val db = dbHelper.writableDatabase
+
+        // Lấy các món trong đơn cũ
+        val cursor = db.rawQuery(
+            """
+            SELECT product_id, quantity
+            FROM ${DatabaseHelper.TABLE_ORDER_ITEMS}
+            WHERE order_id = ?
+            """.trimIndent(),
+            arrayOf(order.id.toString())
+        )
+
+        var addedCount = 0
+
+        if (cursor.moveToFirst()) {
+            do {
+                val productId = cursor.getInt(cursor.getColumnIndexOrThrow("product_id"))
+                val quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"))
+
+                // Kiểm tra món còn available không
+                val pCursor = db.rawQuery(
+                    "SELECT status FROM ${DatabaseHelper.TABLE_PRODUCTS} WHERE id = ?",
+                    arrayOf(productId.toString())
+                )
+                var status = "unavailable"
+                if (pCursor.moveToFirst()) {
+                    status = pCursor.getString(0)
+                }
+                pCursor.close()
+
+                if (status != "available") continue
+
+                // Kiểm tra đã có trong giỏ chưa
+                val cCursor = db.rawQuery(
+                    "SELECT id, quantity FROM ${DatabaseHelper.TABLE_CART} WHERE user_id = ? AND product_id = ?",
+                    arrayOf(userId.toString(), productId.toString())
+                )
+
+                if (cCursor.moveToFirst()) {
+                    val cartId = cCursor.getInt(0)
+                    val oldQty = cCursor.getInt(1)
+                    val values = ContentValues().apply {
+                        put("quantity", oldQty + quantity)
+                    }
+                    db.update(DatabaseHelper.TABLE_CART, values, "id = ?", arrayOf(cartId.toString()))
+                } else {
+                    val values = ContentValues().apply {
+                        put("user_id", userId)
+                        put("product_id", productId)
+                        put("quantity", quantity)
+                    }
+                    db.insert(DatabaseHelper.TABLE_CART, null, values)
+                }
+                cCursor.close()
+                addedCount++
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+
+        if (addedCount > 0) {
+            Toast.makeText(this, "Đã thêm $addedCount món vào giỏ hàng", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Không còn món nào khả dụng để đặt lại", Toast.LENGTH_SHORT).show()
         }
     }
 }

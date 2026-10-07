@@ -8,7 +8,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "FoodOrdering.db"
-        private const val DATABASE_VERSION = 3          // tăng version vì đổi schema
+        private const val DATABASE_VERSION = 4          // tăng version vì có thay đổi schema
 
         const val TABLE_USERS = "users"
         const val TABLE_CATEGORIES = "categories"
@@ -19,7 +19,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Users - dùng phone thay email
+
+        // 1. Users (đăng nhập bằng số điện thoại)
         db.execSQL(
             """
             CREATE TABLE $TABLE_USERS (
@@ -32,7 +33,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             """.trimIndent()
         )
 
-        // Categories
+        // 2. Categories
         db.execSQL(
             """
             CREATE TABLE $TABLE_CATEGORIES (
@@ -42,7 +43,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             """.trimIndent()
         )
 
-        // Products
+        // 3. Products
         db.execSQL(
             """
             CREATE TABLE $TABLE_PRODUCTS (
@@ -58,7 +59,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             """.trimIndent()
         )
 
-        // Cart
+        // 4. Cart
         db.execSQL(
             """
             CREATE TABLE $TABLE_CART (
@@ -72,28 +73,29 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             """.trimIndent()
         )
 
-        // Orders
+        // 5. Orders
         db.execSQL(
             """
             CREATE TABLE $TABLE_ORDERS (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
+                order_code TEXT NOT NULL UNIQUE,
                 total REAL NOT NULL,
                 status TEXT NOT NULL,
                 created_at TEXT NOT NULL,
-                order_code TEXT NOT NULL UNIQUE,
                 FOREIGN KEY (user_id) REFERENCES $TABLE_USERS(id)
             )
             """.trimIndent()
         )
 
-        // Order Items
+        // 6. Order Items (chi tiết đơn hàng)
         db.execSQL(
             """
             CREATE TABLE $TABLE_ORDER_ITEMS (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 order_id INTEGER NOT NULL,
                 product_id INTEGER NOT NULL,
+                product_name TEXT NOT NULL,
                 quantity INTEGER NOT NULL,
                 price REAL NOT NULL,
                 FOREIGN KEY (order_id) REFERENCES $TABLE_ORDERS(id),
@@ -104,6 +106,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Xóa toàn bộ bảng cũ rồi tạo lại
         db.execSQL("DROP TABLE IF EXISTS $TABLE_ORDER_ITEMS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_ORDERS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CART")

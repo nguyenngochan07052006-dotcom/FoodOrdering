@@ -1,4 +1,4 @@
-package com.example.foodordering.product
+package com.example.foodordering.model
 
 data class Product(
     val id: Int,
