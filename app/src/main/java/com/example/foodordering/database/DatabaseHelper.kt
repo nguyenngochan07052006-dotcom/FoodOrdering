@@ -8,9 +8,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "FoodOrdering.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 3          // tăng version vì đổi schema
 
-        // Tên bảng
         const val TABLE_USERS = "users"
         const val TABLE_CATEGORIES = "categories"
         const val TABLE_PRODUCTS = "products"
@@ -20,20 +19,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // Bảng users
+        // Users - dùng phone thay email
         db.execSQL(
             """
             CREATE TABLE $TABLE_USERS (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
+                phone TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL,
                 role TEXT NOT NULL
             )
             """.trimIndent()
         )
 
-        // Bảng categories
+        // Categories
         db.execSQL(
             """
             CREATE TABLE $TABLE_CATEGORIES (
@@ -43,7 +42,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             """.trimIndent()
         )
 
-        // Bảng products
+        // Products
         db.execSQL(
             """
             CREATE TABLE $TABLE_PRODUCTS (
@@ -53,27 +52,27 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 price REAL NOT NULL,
                 description TEXT,
                 image TEXT,
-                status TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'available',
                 FOREIGN KEY (category_id) REFERENCES $TABLE_CATEGORIES(id)
             )
             """.trimIndent()
         )
 
-        // Bảng cart_items
+        // Cart
         db.execSQL(
             """
             CREATE TABLE $TABLE_CART (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
                 product_id INTEGER NOT NULL,
-                quantity INTEGER NOT NULL,
+                quantity INTEGER NOT NULL DEFAULT 1,
                 FOREIGN KEY (user_id) REFERENCES $TABLE_USERS(id),
                 FOREIGN KEY (product_id) REFERENCES $TABLE_PRODUCTS(id)
             )
             """.trimIndent()
         )
 
-        // Bảng orders
+        // Orders
         db.execSQL(
             """
             CREATE TABLE $TABLE_ORDERS (
@@ -82,13 +81,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 total REAL NOT NULL,
                 status TEXT NOT NULL,
                 created_at TEXT NOT NULL,
-                order_code TEXT NOT NULL,
+                order_code TEXT NOT NULL UNIQUE,
                 FOREIGN KEY (user_id) REFERENCES $TABLE_USERS(id)
             )
             """.trimIndent()
         )
 
-        // Bảng order_items
+        // Order Items
         db.execSQL(
             """
             CREATE TABLE $TABLE_ORDER_ITEMS (

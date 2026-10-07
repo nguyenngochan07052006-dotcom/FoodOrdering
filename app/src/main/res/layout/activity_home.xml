@@ -13,18 +13,21 @@
         android:orientation="horizontal"
         android:background="#6D4C41"
         android:paddingTop="40dp"
-        android:paddingBottom="20dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp"
         android:gravity="center_vertical">
 
-        <!-- Avatar -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            app:cardCornerRadius="26dp"
+            android:id="@+id/cardAvatar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            app:cardCornerRadius="22dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#EFEBE9">
+            app:cardBackgroundColor="#EFEBE9"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
 
             <TextView
                 android:id="@+id/tvAvatar"
@@ -32,18 +35,17 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="U"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#5D4037" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Tên + lời chào -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="14dp">
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:id="@+id/tvWelcome"
@@ -51,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="Xin chào!"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -61,31 +63,78 @@
                 android:layout_height="wrap_content"
                 android:text="Bạn muốn uống gì hôm nay?"
                 android:textColor="#EFEBE9"
-                android:textSize="13sp"
-                android:layout_marginTop="2dp" />
+                android:textSize="11sp"
+                android:layout_marginTop="1dp" />
         </LinearLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCart"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Giỏ"
+            android:textSize="11sp"
+            app:cornerRadius="18dp"
+            android:backgroundTint="#8D6E63"
+            android:textColor="#FFFFFF"
+            android:paddingHorizontal="10dp"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_marginEnd="4dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Đơn"
+            android:textSize="11sp"
+            app:cornerRadius="18dp"
+            android:backgroundTint="#A1887F"
+            android:textColor="#FFFFFF"
+            android:paddingHorizontal="10dp"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
     </LinearLayout>
 
-    <!-- Nội dung tạm -->
+    <!-- Tiêu đề danh mục -->
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Danh mục"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#5D4037"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="6dp" />
+
+    <!-- Danh mục (cuộn ngang) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:clipToPadding="false"
+        android:orientation="horizontal" />
+
+    <!-- Tiêu đề món -->
+    <TextView
+        android:id="@+id/tvCategoryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tất cả món"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#5D4037"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="6dp" />
+
+    <!-- Danh sách món -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="Trang chủ User\n(Sẽ hiển thị danh sách món ở bước sau)"
-        android:textSize="16sp"
-        android:textColor="#5D4037"
-        android:padding="24dp" />
-
-    <!-- Nút Đăng xuất -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng xuất"
-        android:layout_margin="20dp"
-        app:cornerRadius="12dp"
-        android:backgroundTint="#8D6E63" />
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
 
 </LinearLayout>

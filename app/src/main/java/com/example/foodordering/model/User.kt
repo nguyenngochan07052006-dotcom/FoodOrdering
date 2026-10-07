@@ -1,9 +1,9 @@
 package com.example.foodordering.model
 
 data class User(
-    val id: Int = 0,
+    val id: Int,
     val name: String,
-    val email: String,
+    val phone: String,
     val password: String,
-    val role: String          // "USER" hoặc "ADMIN"
+    val role: String
 )

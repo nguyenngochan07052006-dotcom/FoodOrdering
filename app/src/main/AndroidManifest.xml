@@ -24,6 +24,10 @@
         <activity android:name=".auth.RegisterActivity" />
         <activity android:name=".product.HomeActivity" />
         <activity android:name=".admin.AdminDashboardActivity" />
+        <activity android:name=".product.ProductDetailActivity" />
+        <activity android:name=".cart.CartActivity" />
+        <activity android:name=".order.OrdersActivity" />
+        <activity android:name=".profile.ProfileActivity" />
     </application>
 
 </manifest>
