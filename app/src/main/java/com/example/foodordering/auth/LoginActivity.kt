@@ -2,7 +2,8 @@ package com.example.foodordering.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.widget.AutoCompleteTextView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodordering.R
@@ -10,6 +11,7 @@ import com.example.foodordering.admin.AdminDashboardActivity
 import com.example.foodordering.database.DatabaseHelper
 import com.example.foodordering.product.HomeActivity
 import com.example.foodordering.utils.SessionManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
 class LoginActivity : AppCompatActivity() {
@@ -30,10 +32,10 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        val edtPhone = findViewById<TextInputEditText>(R.id.edtPhone)
+        val edtPhone = findViewById<AutoCompleteTextView>(R.id.edtPhone)
         val edtPassword = findViewById<TextInputEditText>(R.id.edtPassword)
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
-        val btnRegister = findViewById<Button>(R.id.btnRegister)
+        val btnLogin = findViewById<MaterialButton>(R.id.btnLogin)
+        val tvRegister = findViewById<TextView>(R.id.tvRegister)
 
         btnLogin.setOnClickListener {
             val phone = edtPhone.text.toString().trim()
@@ -47,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
             login(phone, password)
         }
 
-        btnRegister.setOnClickListener {
+        tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
@@ -64,7 +66,6 @@ class LoginActivity : AppCompatActivity() {
             val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
             val role = cursor.getString(cursor.getColumnIndexOrThrow("role"))
 
-            // Lưu session
             sessionManager.createLoginSession(userId, name, phone, role)
 
             Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
