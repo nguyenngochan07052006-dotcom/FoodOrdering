@@ -54,6 +54,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 description TEXT,
                 image TEXT,
                 status TEXT NOT NULL DEFAULT 'available',
+                label TEXT DEFAULT '',
                 FOREIGN KEY (category_id) REFERENCES $TABLE_CATEGORIES(id)
             )
             """.trimIndent()
