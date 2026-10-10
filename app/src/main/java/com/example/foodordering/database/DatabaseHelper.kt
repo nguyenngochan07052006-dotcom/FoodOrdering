@@ -10,13 +10,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     companion object {
         private const val DATABASE_NAME = "FoodOrdering.db"
         private const val DATABASE_VERSION = 1
-
         const val TABLE_USERS = "users"
         const val TABLE_CATEGORIES = "categories"
         const val TABLE_PRODUCTS = "products"
         const val TABLE_CART = "cart"
         const val TABLE_ORDERS = "orders"
         const val TABLE_ORDER_ITEMS = "order_items"
+        const val TABLE_INVENTORY = "inventory"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -103,7 +103,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             )
             """.trimIndent()
         )
-
+        // Inventory / Kho
+        db.execSQL(
+            """
+            CREATE TABLE inventory (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT NOT NULL UNIQUE,
+                name TEXT NOT NULL,
+                group_name TEXT NOT NULL,
+                unit TEXT NOT NULL,
+                quantity REAL NOT NULL DEFAULT 0,
+                min_quantity REAL NOT NULL DEFAULT 0,
+                status TEXT NOT NULL DEFAULT 'active'
+            )
+            """.trimIndent()
+        )
         // ==================== DỮ LIỆU MẪU ====================
 
         // 1. Tài khoản Admin
@@ -173,6 +187,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.execSQL("DROP TABLE IF EXISTS $TABLE_PRODUCTS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CATEGORIES")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_INVENTORY")
         onCreate(db)
     }
 }

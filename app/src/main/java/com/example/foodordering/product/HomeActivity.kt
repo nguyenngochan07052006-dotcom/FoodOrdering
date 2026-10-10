@@ -164,7 +164,8 @@ class HomeActivity : AppCompatActivity() {
                     price = cursor.getDouble(cursor.getColumnIndexOrThrow("price")),
                     description = cursor.getString(cursor.getColumnIndexOrThrow("description")) ?: "",
                     image = cursor.getString(cursor.getColumnIndexOrThrow("image")) ?: "",
-                    status = cursor.getString(cursor.getColumnIndexOrThrow("status"))
+                    status = cursor.getString(cursor.getColumnIndexOrThrow("status")),
+                    label = cursor.getString(cursor.getColumnIndexOrThrow("label")) ?: ""
                 )
                 allProducts.add(product)
             } while (cursor.moveToNext())

@@ -29,6 +29,7 @@
         <activity android:name=".order.OrdersActivity" />
         <activity android:name=".profile.ProfileActivity" />
         <activity android:name=".admin.AdminProductsActivity" />
+        <activity android:name=".admin.AdminInventoryActivity" />
     </application>
 
 </manifest>

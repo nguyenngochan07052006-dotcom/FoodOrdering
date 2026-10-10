@@ -74,7 +74,6 @@ class DatabaseSeeder(private val context: Context) {
             val label: String = ""
         )
 
-
         val products = listOf(
             // 1. Cà phê máy
             ProductSeed(1, "Espresso", 35000.0, "Espresso đậm đà", label = "Bán chạy"),
@@ -151,7 +150,72 @@ class DatabaseSeeder(private val context: Context) {
             }
             db.insert(DatabaseHelper.TABLE_PRODUCTS, null, values)
         }
+        // ===== DỮ LIỆU KHO (theo file MD) =====
+        data class InventorySeed(
+            val code: String,
+            val name: String,
+            val group: String,
+            val unit: String,
+            val quantity: Double,
+            val minQty: Double
+        )
 
+        val inventoryItems = listOf(
+            // 1. Ly, nắp, vật tư
+            InventorySeed("BB001", "Ly giấy 700 ml", "Bao bì", "Cái", 300.0, 200.0),
+            InventorySeed("BB002", "Nắp ly 700 ml", "Bao bì", "Cái", 300.0, 200.0),
+            InventorySeed("BB003", "Ống hút trà sữa cỡ lớn", "Bao bì", "Cái", 250.0, 200.0),
+            InventorySeed("BB004", "Muỗng nhựa dùng một lần", "Bao bì", "Cái", 150.0, 100.0),
+            InventorySeed("BB005", "Túi mang đi", "Bao bì", "Cái", 120.0, 100.0),
+            InventorySeed("BB006", "Khăn giấy", "Bao bì", "Gói", 15.0, 10.0),
+            InventorySeed("BB007", "Túi đựng rác", "Bao bì", "Cuộn", 8.0, 5.0),
+
+            // 2. Topping
+            InventorySeed("TP001", "Trân châu đen", "Topping", "Kg", 5.0, 2.0),
+            InventorySeed("TP002", "Trân châu trắng", "Topping", "Kg", 3.0, 1.0),
+            InventorySeed("TP003", "Thạch cà phê", "Topping", "Kg", 2.0, 1.0),
+            InventorySeed("TP004", "Thạch trái cây", "Topping", "Kg", 2.0, 1.0),
+            InventorySeed("TP005", "Pudding trứng", "Topping", "Kg", 2.0, 1.0),
+            InventorySeed("TP006", "Thạch nha đam", "Topping", "Kg", 2.0, 1.0),
+            InventorySeed("TP008", "Kem cheese", "Topping", "Kg", 2.0, 1.0),
+
+            // 3. Nguyên liệu nền & sữa
+            InventorySeed("NL001", "Trà đen", "Nguyên liệu nền", "Kg", 3.0, 1.0),
+            InventorySeed("NL002", "Trà xanh", "Nguyên liệu nền", "Kg", 2.0, 1.0),
+            InventorySeed("NL003", "Trà ô long", "Nguyên liệu nền", "Kg", 2.0, 1.0),
+            InventorySeed("NL004", "Bột matcha", "Nguyên liệu nền", "Kg", 1.0, 0.5),
+            InventorySeed("NL005", "Bột cacao", "Nguyên liệu nền", "Kg", 1.0, 0.5),
+            InventorySeed("NL006", "Bột kem béo", "Nguyên liệu nền", "Kg", 2.0, 1.0),
+            InventorySeed("NL007", "Sữa tươi", "Nguyên liệu nền", "Lít", 10.0, 6.0),
+            InventorySeed("NL008", "Sữa đặc", "Nguyên liệu nền", "Lon", 20.0, 12.0),
+            InventorySeed("NL009", "Siro đường", "Nguyên liệu nền", "Chai", 5.0, 3.0),
+            InventorySeed("NL010", "Đường cát", "Nguyên liệu nền", "Kg", 5.0, 2.0),
+            InventorySeed("NL011", "Bột frappe/đá xay", "Nguyên liệu nền", "Kg", 2.0, 1.0),
+
+            // 4. Siro & hương vị
+            InventorySeed("NL012", "Siro đào", "Siro & hương vị", "Chai", 2.0, 1.0),
+            InventorySeed("NL013", "Siro dâu", "Siro & hương vị", "Chai", 2.0, 1.0),
+            InventorySeed("NL014", "Siro vải", "Siro & hương vị", "Chai", 2.0, 1.0),
+            InventorySeed("NL015", "Siro xoài", "Siro & hương vị", "Chai", 2.0, 1.0),
+            InventorySeed("NL016", "Siro chanh dây", "Siro & hương vị", "Chai", 2.0, 1.0),
+            InventorySeed("NL017", "Bột socola", "Siro & hương vị", "Kg", 1.0, 0.5),
+            InventorySeed("NL018", "Muối", "Siro & hương vị", "Kg", 1.0, 0.5),
+            InventorySeed("NL019", "Chanh tươi", "Siro & hương vị", "Kg", 3.0, 2.0),
+            InventorySeed("NL020", "Cam tươi", "Siro & hương vị", "Kg", 3.0, 2.0)
+        )
+
+        inventoryItems.forEach { item ->
+            val values = ContentValues().apply {
+                put("code", item.code)
+                put("name", item.name)
+                put("group_name", item.group)
+                put("unit", item.unit)
+                put("quantity", item.quantity)
+                put("min_quantity", item.minQty)
+                put("status", "active")
+            }
+            db.insert(DatabaseHelper.TABLE_INVENTORY, null, values)
+        }
 
         db.close()
     }

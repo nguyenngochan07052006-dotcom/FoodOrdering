@@ -46,15 +46,18 @@ class AdminDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
-
         findViewById<MaterialCardView>(R.id.cardManageOrders).setOnClickListener {
             startActivity(Intent(this, AdminOrdersActivity::class.java))
         }
-
         findViewById<MaterialCardView>(R.id.cardManageProducts).setOnClickListener {
             startActivity(Intent(this, AdminProductsActivity::class.java))
         }
-
+        findViewById<MaterialCardView>(R.id.cardManageInventory).setOnClickListener {
+            startActivity(Intent(this, AdminInventoryActivity::class.java))
+        }
+        findViewById<MaterialCardView>(R.id.cardManageProducts).setOnClickListener {
+            startActivity(Intent(this, AdminProductsActivity::class.java))
+        }
         loadStatistics()
     }
 

@@ -88,7 +88,15 @@
         android:backgroundTint="#6D4C41"
         android:textColor="#FFFFFF"
         style="@style/Widget.MaterialComponents.Button" />
-
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quên mật khẩu?"
+        android:textSize="14sp"
+        android:textColor="#6D4C41"
+        android:layout_marginTop="12dp"
+        android:padding="8dp" />
     <!-- Chuyển sang Đăng ký -->
     <TextView
         android:id="@+id/tvRegister"
